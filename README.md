@@ -5,19 +5,13 @@ const ejs = require("ejs");
 const fileUpload = require("express-fileupload");
 const { v4: uuidv4 } = require("uuid");
 const mysql = require("mysql");
-
-// Initialize Express App
 const app = express();
-
-// Set View Engine and Middleware
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(fileUpload());
-
-// Database Connection
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -25,10 +19,6 @@ const connection = mysql.createConnection({
   database: "",
 });
 connection.connect();
-
-/*****************************  User-End Portal ***************************/
-
-// Routes for User Sign-up, Sign-in, Home Page, Cart, Checkout, Order Confirmation, My Orders, and Settings
 app.get("/", renderIndexPage);
 app.get("/signup", renderSignUpPage);
 app.post("/signup", signUpUser);
@@ -44,9 +34,6 @@ app.get("/settings", renderSettingsPage);
 app.post("/address", updateAddress);
 app.post("/contact", updateContact);
 app.post("/password", updatePassword);
-
-/***************************************** Admin End Portal ********************************************/
-// Routes for Admin Sign-in, Admin Homepage, Adding Food, Viewing and Dispatching Orders, Changing Price, and Logout
 app.get("/admin_signin", renderAdminSignInPage);
 app.post("/admin_signin", adminSignIn);
 app.get("/adminHomepage", renderAdminHomepage);
@@ -57,19 +44,12 @@ app.post("/admin_view_dispatch_orders", dispatchOrders);
 app.get("/admin_change_price", renderChangePricePage);
 app.post("/admin_change_price", changePrice);
 app.get("/logout", logout);
-
-/***************************** Route Handlers ***************************/
-
-// Index Page
 function renderIndexPage(req, res) {
   res.render("index");
 }
-
-// User Sign-up
 function renderSignUpPage(req, res) {
   res.render("signup");
 }
-
 function signUpUser(req, res) {
   const { name, address, email, mobile, password } = req.body;
   connection.query(
@@ -84,13 +64,9 @@ function signUpUser(req, res) {
     }
   );
 }
-
-// User Sign-in
-
 function renderSignInPage(req, res) {
   res.render("signin");
 }
-
 function signInUser(req, res) {
   const { email, password } = req.body;
   connection.query(
@@ -108,8 +84,6 @@ function signInUser(req, res) {
     }
   );
 }
-
-// Render Home Page
 function renderHomePage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -133,8 +107,6 @@ function renderHomePage(req, res) {
     }
   );
 }
-
-// Render Cart Page
 function renderCart(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -155,8 +127,6 @@ function renderCart(req, res) {
     }
   );
 }
-
-// Update Cart
 function updateCart(req, res) {
   const cartItems = req.body.cart;
   const uniqueItems = [...new Set(cartItems)];
@@ -166,8 +136,6 @@ function updateCart(req, res) {
 
   // Update cart logic if necessary
 }
-
-// Function to fetch details of items in the cart
 let citems = [];
 let citemdetails = [];
 let item_in_cart = 0;
@@ -185,8 +153,6 @@ function getItemDetails(citems, size) {
   });
   item_in_cart = size;
 }
-
-// Checkout
 function checkout(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -258,8 +224,6 @@ function checkout(req, res) {
     }
   );
 }
-
-// Render Confirmation Page
 function renderConfirmationPage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -275,8 +239,6 @@ function renderConfirmationPage(req, res) {
     }
   );
 }
-
-// Render My Orders Page
 function renderMyOrdersPage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -304,8 +266,6 @@ function renderMyOrdersPage(req, res) {
     }
   );
 }
-
-// Render Settings Page
 function renderSettingsPage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -323,7 +283,6 @@ function renderSettingsPage(req, res) {
     }
   );
 }
-// Update Address
 function updateAddress(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -352,8 +311,6 @@ function updateAddress(req, res) {
     }
   );
 }
-
-// Update Contact
 function updateContact(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -382,8 +339,6 @@ function updateContact(req, res) {
     }
   );
 }
-
-// Update Password
 function updatePassword(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -413,9 +368,6 @@ function updatePassword(req, res) {
     }
   );
 }
-
-// Admin Homepage
-
 function renderAdminHomepage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -435,8 +387,6 @@ function renderAdminHomepage(req, res) {
     }
   );
 }
-
-// Admin Sign-in
 
 function renderAdminSignInPage(req, res) {
   res.render("admin_signin");
@@ -461,7 +411,6 @@ function adminSignIn(req, res) {
   );
 }
 
-// Render Add Food Page
 function renderAddFoodPage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -481,8 +430,6 @@ function renderAddFoodPage(req, res) {
     }
   );
 }
-
-// Add Food
 function addFood(req, res) {
   const {
     FoodName,
@@ -528,8 +475,6 @@ function addFood(req, res) {
     res.render("admin_addFood");
   }
 }
-
-// Render Admin View and Dispatch Orders Page
 function renderViewDispatchOrdersPage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -554,8 +499,6 @@ function renderViewDispatchOrdersPage(req, res) {
     }
   );
 }
-
-// Dispatch Orders
 function dispatchOrders(req, res) {
   totalOrder = req.body.order_id_s;
   const unique = [...new Set(totalOrder)];
@@ -608,9 +551,6 @@ function dispatchOrders(req, res) {
     }
   );
 }
-
-// Render Admin Change Price Page
-// Render Admin Change Price Page
 function renderChangePricePage(req, res) {
   const userId = req.cookies.cookuid;
   const userName = req.cookies.cookuname;
@@ -634,7 +574,6 @@ function renderChangePricePage(req, res) {
   );
 }
 
-// Change Price
 function changePrice(req, res) {
   const item_name = req.body.item_name;
   const new_food_price = req.body.NewFoodPrice;
@@ -660,8 +599,6 @@ function changePrice(req, res) {
     }
   );
 }
-
-// Logout
 function logout(req, res) {
   res.clearCookie();
   return res.redirect("/signin");
